@@ -177,13 +177,16 @@ Most of the time, this is very easy to correct by identifying the module in ques
 
 To deploy, run:
 
- `python scripts.deploy.py --env prod`.
+ `python scripts/deploy.py --env prod`.
 
 Please be aware that running this script updates the bot in the production environment, and changes will be visible more or less immediately to your users.
 
 The deployment script will guide you through double checking your environment variables, validating your Cloudflare login, and so on.
 
 You can answer "n" to any question and that portion of deployment will be halted.
+
+Make sure you have configured the bot tagline and
+display name before pushing description / short description, if you choose to do so.
 
 
 
