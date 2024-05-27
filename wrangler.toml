@@ -7,9 +7,6 @@ compatibility_flags = [ "nodejs_compat" ]
 [env.dev]
 name = "solana-foundation-bot-dev"
 
-[env.staging]
-name = "solana-foundation-bot-staging"
-
 [env.prod]
 name = "solana-foundation-bot-prod"
 
@@ -33,21 +30,6 @@ TELEGRAM_BOT_USERNAME = "solana-foundation-bot-dev"
 DOWN_FOR_MAINTENANCE = "false"
 QUESTION_TIMEOUT_MS = "30000"
 
-[env.staging.vars]
-# do not change this string EVER post launch
-ENVIRONMENT = "staging"
-CLOUDFLARE_ACCOUNT_ID = "kp1197"
-TELEGRAM_BOT_INSTANCE_DISPLAY_NAME = "STAGING"
-ADMIN_TELEGRAM_USER_IDS = "6434185018"
-SUPER_ADMIN_USER_ID = "6434185018"
-TELEGRAM_BOT_DISPLAY_NAME = "Solana Foundation on Telegram"
-TELEGRAM_BOT_TAGLINE = "A Tagline."
-TELEGRAM_BOT_SERVER_URL = "https://api.telegram.org"
-TELEGRAM_BOT_ID = "...TODO..."
-TELEGRAM_BOT_USERNAME = "solana-foundation-bot-staging"
-DOWN_FOR_MAINTENANCE = "false"
-QUESTION_TIMEOUT_MS = "30000"
-
 [env.prod.vars]
 # do not change this string EVER post launch
 ENVIRONMENT = "prod"
@@ -59,7 +41,7 @@ TELEGRAM_BOT_DISPLAY_NAME = "Solana Foundation on Telegram"
 TELEGRAM_BOT_TAGLINE = "A Tagline."
 TELEGRAM_BOT_SERVER_URL = "https://api.telegram.org"
 TELEGRAM_BOT_ID = "...TODO..."
-TELEGRAM_BOT_USERNAME = "solana-foundation-bot-prod"
+TELEGRAM_BOT_USERNAME = "solana_foundation_bot"
 DOWN_FOR_MAINTENANCE = "false"
 QUESTION_TIMEOUT_MS = "30000"
 
@@ -68,12 +50,7 @@ bindings = [
     {name = "UserDO", class_name = "UserDO" }
 ]
 
-[env.beta.durable_objects]
-bindings = [
-    {name = "UserDO", class_name = "UserDO" }
-]
-
-[env.sim.durable_objects]
+[env.prod.durable_objects]
 bindings = [
     {name = "UserDO", class_name = "UserDO" }
 ]
