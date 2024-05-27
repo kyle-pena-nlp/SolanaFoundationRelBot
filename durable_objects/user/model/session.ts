@@ -1,0 +1,2 @@
+
+export type SessionKey = string; 
