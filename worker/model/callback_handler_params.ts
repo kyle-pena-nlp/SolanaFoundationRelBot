@@ -9,6 +9,7 @@ export class CallbackHandlerParams {
     private _impersonatedUserID : number
     private _realUserID : number
     private _telegramUserName : string
+	callbackQueryID : number|undefined
     chatID : number
     messageID : number
     text : string|null 	
@@ -19,6 +20,7 @@ export class CallbackHandlerParams {
         this._impersonatedUserID = info.getTelegramUserID();
         this._realUserID = info.getTelegramUserID('real');
         this._telegramUserName = info.getTelegramUserName('real');
+		this.callbackQueryID = info.callbackQueryID;
         this.chatID = info.chatID;
         this.messageID = info.messageID;
         this.text = info.text;

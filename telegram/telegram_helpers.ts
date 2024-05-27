@@ -168,7 +168,7 @@ export async function sendRequestToTG(request : Request) : Promise<Response> {
 }
 
 function makeTelegramSendMessageRequest(chatID : number, 
-    text : string, 
+    text : string,  
     env : Env, 
     parseMode : 'MarkdownV2'|'HTML',
     dismissButton : boolean|MenuCode,

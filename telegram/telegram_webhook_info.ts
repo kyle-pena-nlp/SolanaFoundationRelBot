@@ -9,6 +9,7 @@ export class TelegramWebhookInfo {
     private _impersonatedUserID : number; // the userID on whose behalf the action are performed
 	private _realUserID : number; // different from above only if impersonating
     private _telegramUserName : string;
+	callbackQueryID : number|undefined /* referred to as callback_query_id sometimes */
     chatID : number; /* The Telegram chat ID */
     messageID : number; /* The message ID, but the original message ID if a callback or response */
     text : string|null; // the text of the message
@@ -22,6 +23,7 @@ export class TelegramWebhookInfo {
 
 
     constructor(telegramRequestBody : any, env : Env) {
+		this.callbackQueryID = this.extractCallbackQueryID(telegramRequestBody);
 		this.chatID = this.extractChatID(telegramRequestBody);
 		this._impersonatedUserID = this.extractTelegramUserID(telegramRequestBody);
 		this._realUserID = this.extractTelegramUserID(telegramRequestBody);		
@@ -98,7 +100,11 @@ export class TelegramWebhookInfo {
 			return true;
 		}
 		return false;
-	}	
+	}
+	
+	private extractCallbackQueryID(requestBody : any) : number|undefined {
+		return requestBody?.callback_query?.id as number|undefined;
+	}
 
 	private extractChatID(requestBody : any) : number {
 		let chatID = requestBody?.callback_query?.message?.chat?.id;

@@ -1,6 +1,6 @@
 import { maybeReadSessionObj } from "../durable_objects/user/userDO_interop";
 import { Env } from "../env";
-import { makeSuccessResponse } from "../http";
+import { makeJSONRequest, makeSuccessResponse } from "../http";
 import { logDebug } from "../logging";
 import { BaseMenu, CommonMenuData, MenuAnsweredQuestion, MenuBizRel, MenuCommunity, MenuDevSupport, MenuStart, MenuUsefulLinks } from "../menus";
 import { MenuMarketingPRBranding } from "../menus/menu_marketing_pr_branding";
@@ -10,7 +10,7 @@ import { BaseReplyKeyboard } from "../reply_keyboards";
 import { QuestionsReplyKeyboard } from "../reply_keyboards/questions_reply_keyboard";
 import { ReplyQuestion, ReplyQuestionCode } from "../reply_question";
 import { ReplyQuestionData, replyQuestionHasNextSteps } from "../reply_question/reply_question_data";
-import { TelegramWebhookInfo, deleteTGMessage } from "../telegram";
+import { TelegramWebhookInfo, deleteTGMessage, makeTelegramBotUrl, sendRequestToTG } from "../telegram";
 import { assertNever } from "../util";
 import { MenuCodeHandlerCapabilities } from "./handlers/base_menu_code_handler";
 import { MenuCodeHandlerMap } from "./menu_code_handler_map";
@@ -67,7 +67,22 @@ export class CallbackHandler {
             assertNever(callbackResult);
         }
 
+        await this.answerCallbackQuery(params);
+
         return makeSuccessResponse();
+    }
+
+    async answerCallbackQuery(params : CallbackHandlerParams) {
+        if (params.callbackQueryID == null) {
+            return;
+        }
+        const method = 'answerCallbackQuery';
+        const url = makeTelegramBotUrl(method, this.env);
+        const body = {
+            callback_query_id: params.callbackQueryID
+        };
+        const request = makeJSONRequest(url, body);
+        await sendRequestToTG(request);
     }
 
     async handleCallbackQueryInternal(params : CallbackHandlerParams) : Promise<BaseMenu|ReplyQuestion|BaseReplyKeyboard|void> {
