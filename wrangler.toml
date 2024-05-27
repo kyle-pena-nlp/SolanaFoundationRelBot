@@ -17,7 +17,6 @@ name = "solana-foundation-bot-prod"
 tag = "v1" # Should be unique for each entry
 new_classes = ["UserDO"]
 
-# 1632540473
 
 [env.dev.vars]
 # do not change this string EVER post launch
@@ -78,8 +77,3 @@ bindings = [
 bindings = [
     {name = "UserDO", class_name = "UserDO" }
 ]
-
-# The 'wake up!' cron trigger - keeps the price tracker tracking the prices.
-# If you update the patterns, update the index.js because it filters based on pattern.
-[triggers]
-crons = [ "* * * * *", "*/30 * * * *" ]

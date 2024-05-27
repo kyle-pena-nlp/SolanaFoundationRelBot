@@ -24,15 +24,19 @@ export abstract class BaseReplyKeyboard {
 
     }
 
-    async sendToTG(params: { chatID : number }, env : Env) : Promise<boolean> {
+    async sendToTG(params: { chatID : number }|{ chatID : number, messageID : number }, env : Env) : Promise<boolean> {
         const startMS = Date.now();
         
         // sometimes, updating a menu takes more than one request (only if sending photos)
 
         let request : Request|null = null;
 
-        
-        request = this.getCreateReplyKeyboardRequest(params.chatID, env);
+        if ('messageID' in params) {
+            request = this.getUpdateReplyKeyboardRequest(params.chatID, params.messageID, env);
+        }
+        else {
+            request = this.getCreateReplyKeyboardRequest(params.chatID, env);
+        }
         
 
         const response = await fetchAndReadResponse(request);
@@ -45,7 +49,17 @@ export abstract class BaseReplyKeyboard {
         return true;
     }    
 
-    getCreateReplyKeyboardRequest(chatID : number, env : Env) : Request {
+    getUpdateReplyKeyboardRequest(chatID : number, messageID : number, env : Env) : Request {
+        const [replyKeyboardMarkup,text] = this.createReplyKeyboardMarkup();
+        const body = this.createRequestBodyForReplyKeyboard(text, replyKeyboardMarkup, chatID);
+        body.message_id = messageID;
+        const method = 'editMessageText';
+        const url = makeTelegramBotUrl(method, env);
+        const request = makeJSONRequest(url, body);
+        return request; 
+    }
+
+    createReplyKeyboardMarkup() : [any,string] {
         const obj = (this as unknown as ReplyKeyboardCapabilities);
         const buttons = obj.renderButtons();
         const settings = obj.settings();
@@ -55,6 +69,11 @@ export abstract class BaseReplyKeyboard {
             keyboard : keyboardButtons,
             ...settings
         }
+        return [replyKeyboardMarkup,text];
+    }
+
+    getCreateReplyKeyboardRequest(chatID : number, env : Env) : Request {
+        const [replyKeyboardMarkup,text] = this.createReplyKeyboardMarkup();
         const body = this.createRequestBodyForReplyKeyboard(text, replyKeyboardMarkup, chatID);
         const method = 'sendMessage';
         const url = makeTelegramBotUrl(method, env);

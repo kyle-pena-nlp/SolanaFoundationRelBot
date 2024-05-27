@@ -1,4 +1,4 @@
-import { maybeReadSessionObj, storeSessionObj } from "../durable_objects/user/userDO_interop";
+import { maybeReadSessionObj } from "../durable_objects/user/userDO_interop";
 import { Env } from "../env";
 import { makeSuccessResponse } from "../http";
 import { logDebug } from "../logging";
@@ -9,7 +9,7 @@ import { BaseReplyKeyboard } from "../reply_keyboards";
 import { QuestionsReplyKeyboard } from "../reply_keyboards/questions_reply_keyboard";
 import { ReplyQuestion, ReplyQuestionCode } from "../reply_question";
 import { ReplyQuestionData, replyQuestionHasNextSteps } from "../reply_question/reply_question_data";
-import { TelegramWebhookInfo, deleteTGMessage, sendMessageToTG, updateTGMessage } from "../telegram";
+import { TelegramWebhookInfo, deleteTGMessage } from "../telegram";
 import { assertNever } from "../util";
 import { MenuCodeHandlerCapabilities } from "./handlers/base_menu_code_handler";
 import { MenuCodeHandlerMap } from "./menu_code_handler_map";
@@ -39,9 +39,6 @@ export class CallbackHandler {
 
         if (matchingQuestion != null) {
             await new MenuAnsweredQuestion(matchingQuestion, this.env).sendToTG({ chatID : info.chatID }, this.env);
-        }
-        else {
-            await new QuestionsReplyKeyboard().sendToTG({ chatID : info.chatID }, this.env);
         }
 
         return makeSuccessResponse();
@@ -80,22 +77,13 @@ export class CallbackHandler {
 
     async handleCommand(telegramWebhookInfo : TelegramWebhookInfo) : Promise<Response> {
         const command = telegramWebhookInfo.command!!;
-        const tgMessage = await sendMessageToTG(telegramWebhookInfo.chatID, 'One moment...', this.env);
-        if (!tgMessage.success) {
-            return makeSuccessResponse();
+
+        const obj = await this.handleCommandInternal(command, telegramWebhookInfo);
+
+        if (obj != null) {
+            await obj.sendToTG({ chatID : telegramWebhookInfo.chatID }, this.env);
         }
-        const conversationMessageID = tgMessage.messageID;
-        const [commandTextResponse,menu,storeSessionObjectRequest] = await this.handleCommandInternal(command, telegramWebhookInfo, conversationMessageID, this.env);
-        const tgMessageInfo = await updateTGMessage(telegramWebhookInfo.chatID, conversationMessageID, commandTextResponse, this.env);
-        if (!tgMessageInfo.success) {
-            return makeSuccessResponse();
-        }
-        if (storeSessionObjectRequest != null) {
-            await storeSessionObj(telegramWebhookInfo.getTelegramUserID(), telegramWebhookInfo.chatID, conversationMessageID, storeSessionObjectRequest.obj, storeSessionObjectRequest.prefix, this.env);
-        }
-        if (menu != null) {
-            await menu.sendToTG({ chatID : telegramWebhookInfo.chatID, messageID :conversationMessageID}, this.env);
-        }
+
         return makeSuccessResponse();
     }
 
@@ -132,32 +120,32 @@ export class CallbackHandler {
         return makeSuccessResponse();
     }
 
-    private async handleCommandInternal(command : string, info : TelegramWebhookInfo, messageID : number, env : Env) : Promise<[string,BaseReplyKeyboard|BaseMenu|undefined,{ obj : any, prefix : string }?]> {
+    private async handleCommandInternal(command : string, info : TelegramWebhookInfo) : Promise<BaseReplyKeyboard|BaseMenu|undefined> {
         
         const commonMenuData : CommonMenuData = { telegramUserName: info.getTelegramUserName() };
 
         switch(command) {
             case '/start':
                 const startMenu = new MenuStart(commonMenuData, this.env);
-                return ["...", startMenu];
+                return startMenu;
             case '/frequently_asked_questions':
                 const questionsReplyKeyboard = new QuestionsReplyKeyboard();
-                return ["...", questionsReplyKeyboard]; 
+                return questionsReplyKeyboard; 
             case '/dev_support':
                 const devSupportMenu = new MenuDevSupport(commonMenuData, this.env);
-                return ['...', devSupportMenu];
+                return devSupportMenu;
             case '/community':
                 const communityMenu = new MenuCommunity(commonMenuData, this.env);
-                return ['...', communityMenu];
+                return communityMenu;
             case '/useful_links':
                 const usefulLinksMenu = new MenuUsefulLinks(commonMenuData, this.env);
-                return ['...', usefulLinksMenu];
+                return usefulLinksMenu;
             case '/biz_rel':
                 const bizRelMenu = new MenuBizRel(commonMenuData, this.env);
-                return ['...', bizRelMenu];
+                return bizRelMenu;
             case '/marketing_pr_branding':
                 const marketingPRBrandingMenu = new MenuMarketingPRBranding(commonMenuData, this.env);
-                return ['...', marketingPRBrandingMenu];
+                return marketingPRBrandingMenu;
             default:
                 throw new Error(`Unrecognized command: ${command}`);
         }
