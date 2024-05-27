@@ -1,5 +1,5 @@
 import { getCommonEnvironmentVariables } from "../env";
-import { formatQuestion, renderAnswerLines } from "../questions_and_answers";
+import { renderAnswerLines } from "../questions_and_answers";
 import { CallbackButton } from "../telegram";
 import { CommonMenuData } from "./common_menu_data";
 import { Menu, MenuCapabilities } from "./menu";
@@ -10,7 +10,7 @@ export class MenuDevSupport extends Menu<CommonMenuData> implements MenuCapabili
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            formatQuestion('I have a technical issue. What resources are available?'),
+            `The Solana Foundation encourages you to utilize these technical resources to address any technical issues you may have.`,
             ...renderAnswerLines('I_HAVE_TECHNICAL_ISSUE')
         ];   
         
@@ -19,8 +19,8 @@ export class MenuDevSupport extends Menu<CommonMenuData> implements MenuCapabili
     renderOptions(): CallbackButton[][] {
         const envVars = getCommonEnvironmentVariables(this.env);
         const options = this.emptyMenu();
-        this.insertButtonNextLine(options, "Next Topic: Community", this.menuCallback(MenuCode.Community));
-        this.insertButtonNextLine(options, "Close", this.menuCallback(MenuCode.Close));
+        this.insertButtonNextLine(options, ":back: Back", this.menuCallback(MenuCode.Main));
+        this.insertButtonSameLine(options, "Close", this.menuCallback(MenuCode.Close));
         return options;
     }
 

@@ -58,9 +58,9 @@ export const CANNED_QUESTIONS_AND_ANSWERS : QuestionAnswerSpec[] = [
         'code': 'I_HAVE_TECHNICAL_ISSUE',
         'question': 'I have a technical issue. What resources are available?',
         'answer': [
+            `:bullet: <a href="https://solana.stackexchange.com/">Solana Stack Exchange</a>`,            
             `:bullet: <a href="https://solana.com/developers">Official Solana Development Resource Portal</a>`,
             `:bullet: <a href="https://solana.com/docs/intro/dev">Getting Started With Solana Development</a>`,
-            `:bullet: <a href="https://solana.stackexchange.com/">Solana Stack Exchange</a>`,
             `:bullet: <a href="https://solanacookbook.com/">Solana Cookbook</a>`,
             `:bullet: <a href='https://discord.com/invite/kBbATFA7PW'>Solana Tech Discord Server</a>`,
         ]
@@ -70,6 +70,7 @@ export const CANNED_QUESTIONS_AND_ANSWERS : QuestionAnswerSpec[] = [
         'question': 'How Can I Help The Solana Community Grow?',
         'answer': [
             `Interested in helping the Solana community grow?  You can check out a playbook and apply for a small microgrant for individual meetups and events <a href="https://www.solana.com/events">here</a>.`,
+            '',
             `If you are looking to execute a larger initiative, you can apply for a <a href="https://www.solana.org/grants">grant</a> under the funding category 'Community'.`
         ]
     }

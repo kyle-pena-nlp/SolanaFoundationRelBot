@@ -2,6 +2,7 @@ import { getCommonEnvironmentVariables } from "../env";
 import { formatQuestion, renderAnswerLines } from "../questions_and_answers";
 import { CallbackButton } from "../telegram";
 import { CommonMenuData } from "./common_menu_data";
+import { logoHack } from "./logo_hack";
 import { Menu, MenuCapabilities } from "./menu";
 import { MenuCode } from "./menu_code";
 
@@ -10,7 +11,7 @@ export class MenuMarketingPRBranding extends Menu<CommonMenuData> implements Men
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            `<b><u>Topic: Marketing, PR and Branding</u></b>`,
+            `${logoHack()}<b><u>Questions And Answers: Marketing, PR and Branding</u></b>`,
             '',
 
             formatQuestion(`How can we get social media exposure / tweets from the Solana Foundation?`),
@@ -30,7 +31,8 @@ export class MenuMarketingPRBranding extends Menu<CommonMenuData> implements Men
     renderOptions(): CallbackButton[][] {
         const envVars = getCommonEnvironmentVariables(this.env);
         const options = this.emptyMenu();
-        this.insertButtonNextLine(options, "Close", this.menuCallback(MenuCode.Close));
+        this.insertButtonNextLine(options, ":back: Back", this.menuCallback(MenuCode.Main));
+        this.insertButtonSameLine(options, "Close", this.menuCallback(MenuCode.Close));
         return options;
     }
 

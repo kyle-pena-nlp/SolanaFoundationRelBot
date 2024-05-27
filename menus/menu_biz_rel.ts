@@ -10,7 +10,7 @@ export class MenuBizRel extends Menu<CommonMenuData> implements MenuCapabilities
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            `<b><u>Topic: BizRel With The Solana Foundation</u></b>`,
+            `<b><u>Questions and Answers: BizRel With The Solana Foundation</u></b>`,
             '',
             
             formatQuestion(`Can I partner with Solana?`),
@@ -42,8 +42,8 @@ export class MenuBizRel extends Menu<CommonMenuData> implements MenuCapabilities
     renderOptions(): CallbackButton[][] {
         const envVars = getCommonEnvironmentVariables(this.env);
         const options = this.emptyMenu();
-        this.insertButtonNextLine(options, "Next Topic: Marketing, PR, Branding", this.menuCallback(MenuCode.MarketingPRBranding));
-        this.insertButtonNextLine(options, "Close", this.menuCallback(MenuCode.Close));
+        this.insertButtonNextLine(options, ":back: Back", this.menuCallback(MenuCode.Main));
+        this.insertButtonSameLine(options, "Close", this.menuCallback(MenuCode.Close));
         return options;
     }
 

@@ -47,6 +47,6 @@ export class BaseMenuCodeHandler<T extends Menus.MenuCode> {
 
     protected async createMainMenu(info : CallbackHandlerParams | TelegramWebhookInfo, env : Env) : Promise<Menus.BaseMenu> {
         const userData = await getUserData(info.getTelegramUserID(), info.chatID, info.messageID, false, env);
-        return new Menus.MenuMain({ ...userData }, env);
+        return new Menus.MenuStart({ ...userData }, env);
     }    
 }

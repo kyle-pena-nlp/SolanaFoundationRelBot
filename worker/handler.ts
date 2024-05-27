@@ -4,6 +4,7 @@ import { makeSuccessResponse } from "../http";
 import { logDebug } from "../logging";
 import { BaseMenu, CommonMenuData, MenuAnsweredQuestion, MenuBizRel, MenuCommunity, MenuDevSupport, MenuStart, MenuUsefulLinks } from "../menus";
 import { MenuMarketingPRBranding } from "../menus/menu_marketing_pr_branding";
+import { BasePhoto } from "../photos/photos";
 import { findByQuestion } from "../questions_and_answers";
 import { BaseReplyKeyboard } from "../reply_keyboards";
 import { QuestionsReplyKeyboard } from "../reply_keyboards/questions_reply_keyboard";
@@ -120,7 +121,7 @@ export class CallbackHandler {
         return makeSuccessResponse();
     }
 
-    private async handleCommandInternal(command : string, info : TelegramWebhookInfo) : Promise<BaseReplyKeyboard|BaseMenu|undefined> {
+    private async handleCommandInternal(command : string, info : TelegramWebhookInfo) : Promise<BaseReplyKeyboard|BaseMenu|BasePhoto|undefined> {
         
         const commonMenuData : CommonMenuData = { telegramUserName: info.getTelegramUserName() };
 
