@@ -11,18 +11,21 @@ export class MenuMarketingPRBranding extends Menu<CommonMenuData> implements Men
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            `${logoHack()}<b><u>Questions And Answers: Marketing, PR and Branding</u></b>`,
+            `${logoHack()}<b>Questions And Answers: Marketing, PR and Branding</b>`,
             '',
 
             formatQuestion(`How can we get social media exposure / tweets from the Solana Foundation?`),
+            '',
             ...renderAnswerLines('HOW_CAN_I_BE_RETWEETED'),
             '',
 
             formatQuestion(`We have a major release coming up, can you help us with PR/comms?`),
+            '',
             ...renderAnswerLines('HOW_CAN_I_GET_PR_COMMS_SUPPORT'),
             '',
 
             formatQuestion(`What are your brand guidelines? Can I use the Solana logo?`),
+            '',
             ...renderAnswerLines('WHAT_ARE_THE_BRAND_GUIDELINES')
         ];   
         

@@ -10,7 +10,8 @@ export class MenuUsefulLinks extends Menu<CommonMenuData> implements MenuCapabil
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            `${logoHack()}Useful Links`,
+            `${logoHack()}<b>Useful Links</b>`,
+            `Check out these ways to plug into Solana Foundation's online presence.`,
             '',
             `:bullet: <a href="https://x.com/SolanaFndn">Solana Foundation On X/Twitter</a>`,
             `:bullet: <a href="https://x.com/solana_devs">Solana Developers On X/Twitter</a>`,

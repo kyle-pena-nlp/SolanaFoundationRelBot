@@ -1,3 +1,5 @@
+import { logoHack } from "./menus";
+
 export type QUESTION_CODE = 'CAN_I_PARTNER' | 'CAN_I_APPLY_FOR_GRANT'|'CAN_I_CONNECT_WITH_BD_TEAM'|'HOW_CAN_I_BE_RETWEETED'|'HOW_CAN_I_GET_PR_COMMS_SUPPORT'|'WHAT_ARE_THE_BRAND_GUIDELINES'|'I_HAVE_TECHNICAL_ISSUE'|'HOW_CAN_I_HELP_COMMUNITY_GROW';
 
 export type QuestionAnswerSpec = {
@@ -27,7 +29,7 @@ export const CANNED_QUESTIONS_AND_ANSWERS : QuestionAnswerSpec[] = [
         'code': 'CAN_I_CONNECT_WITH_BD_TEAM',
         'question': 'Can you connect me to the Solana Foundation BD team?',
         'answer': [
-            `The BD team is typically heads down working on initiatives of their own, so they not generally available.  However, if there is a specific need you have you can reach out to a Solana Foundation representative.`,
+            `The BD team is typically heads down working on initiatives of their own, so they are not generally available.  However, if there is a specific need you have you can reach out to a Solana Foundation representative.`,
         ]
     },
     {
@@ -35,16 +37,16 @@ export const CANNED_QUESTIONS_AND_ANSWERS : QuestionAnswerSpec[] = [
         'question': 'How can we get social media exposure / tweets from the Solana Foundation?',
         'answer': [
             `We can't guarantee that your news will be retweeted, but to maximize your chances here are some social media guidelines that give you an idea of what we are looking for:`,
-            `  :bullet: <b>Community Focused</b>: Initiatives that move the Solana community forward are more likely to be retweeted by our account`,
-            `  :bullet: <b>Forward-Looking</b>: We are more likely to re-tweet content that highlights Solana's continued growth.`,
-            `  :bullet: <b>Visually Interesting</b>: Most content we retweet contains either a compelling image, video, or previewed link.`,
+            `  :bullet: <b>Community Focused</b>: News that focuses on the Solana community forward is more likely to be retweeted by our account.`,
+            `  :bullet: <b>Forward-Looking</b>: We are more likely to re-tweet content that highlights how Solana is breaking new ground and how the ecosystem and community is growing.`,
+            `  :bullet: <b>Visually Interesting</b>: Most content we retweet contains either a compelling image, video, or link. Plain text is not as compelling.`,
         ]
     },
     {
         'code': 'HOW_CAN_I_GET_PR_COMMS_SUPPORT',
         'question': 'We have a major release coming up, can you help us with PR/comms?',
         'answer': [
-            "We can't guarantee personalized PR support for any specific project or development, but to maximize your changes of success <a href=''>here</a> is a PR 101 Kit from our Head of Comms."
+            "We can't guarantee personalized PR support for any specific project or development, but to maximize your changes of success <a href='https://solana.com/branding'>here</a> is a PR 101 Kit from our Head of Comms."
         ]
     },
     {
@@ -107,7 +109,7 @@ export function renderAnswerLines(code : QUESTION_CODE): string[] {
 }
 
 export function formatQuestion(question : string) {
-    return `<i>Question</i>: <blockquote>${question}</blockquote>`;
+    return `${logoHack()}<b>Question</b>: ${question}`;
 }
 
 export function findByQuestion(question : string) : QuestionAnswerSpec|null {

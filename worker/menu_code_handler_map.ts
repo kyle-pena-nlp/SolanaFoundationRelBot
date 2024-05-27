@@ -1,4 +1,5 @@
 import { MenuBizRel, MenuCode, MenuCommunity, MenuDevSupport, MenuUsefulLinks } from "../menus";
+import { MenuBizRel2 } from "../menus/menu_biz_rel_2";
 import { MenuMarketingPRBranding } from "../menus/menu_marketing_pr_branding";
 import { HandlerMap } from "../util";
 import * as handlers from "./handlers";
@@ -13,5 +14,6 @@ export const MenuCodeHandlerMap : HandlerMap<MenuCode,BaseMenuCodeHandler<MenuCo
     [MenuCode.UsefulLinks]: new handlers.NoOpHandler<MenuUsefulLinks, MenuCode.UsefulLinks>(MenuCode.UsefulLinks, (env) => new MenuUsefulLinks({}, env)),
     [MenuCode.Community]: new handlers.NoOpHandler<MenuCommunity, MenuCode.Community>(MenuCode.Community, (env) => new MenuCommunity({}, env)),
     [MenuCode.QuestionsAndAnswers]: new handlers.QuestionsAndAnswersHandler(MenuCode.QuestionsAndAnswers),
-    [MenuCode.MarketingPRBranding]: new handlers.NoOpHandler<MenuMarketingPRBranding,MenuCode.MarketingPRBranding>(MenuCode.MarketingPRBranding, (env) => new MenuMarketingPRBranding({}, env))
+    [MenuCode.MarketingPRBranding]: new handlers.NoOpHandler<MenuMarketingPRBranding, MenuCode.MarketingPRBranding>(MenuCode.MarketingPRBranding, (env) => new MenuMarketingPRBranding({}, env)),
+    [MenuCode.BizRel2]: new handlers.NoOpHandler<MenuBizRel2, MenuCode.BizRel2>(MenuCode.BizRel2, (env) => new MenuBizRel2({}, env)),
 }

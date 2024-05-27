@@ -6,6 +6,7 @@ export enum MenuCode {
 	Error = "Error",
 	DevSupport = "DevSupport",
 	BizRel = "BizRel",
+	BizRel2 = "BizRel2",
 	MarketingPRBranding = "MarketingPRBranding",
 	UsefulLinks = "UsefulLinks",
 	Community = "Community", 

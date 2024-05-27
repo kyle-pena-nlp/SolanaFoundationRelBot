@@ -11,7 +11,7 @@ export class MenuCommunity extends Menu<CommonMenuData> implements MenuCapabilit
     renderText(): string {
         const envVars = getCommonEnvironmentVariables(this.env);
         const lines = [
-            `${logoHack()}The Solana Foundation is looking to grow its community and you can help!`,
+            `${logoHack()}<b>The Solana Foundation is looking to grow its community, and you can help!</b>`,
             '',
             ...renderAnswerLines('HOW_CAN_I_HELP_COMMUNITY_GROW')
         ];

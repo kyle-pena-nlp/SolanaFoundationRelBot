@@ -11,8 +11,7 @@ export class MenuAnsweredQuestion extends Menu<QuestionAnswerSpec> implements Me
         
         lines.push(formatQuestion(this.menuData.question));
         lines.push("");
-
-        lines.push("<i>Answer</i>:")
+        
         lines.push(...renderAnswerLines(this.menuData.code));
         
         return lines.join("\r\n");
