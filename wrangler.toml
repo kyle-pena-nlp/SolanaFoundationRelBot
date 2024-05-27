@@ -16,7 +16,6 @@ new_classes = ["UserDO"]
 
 
 [env.dev.vars]
-# do not change this string EVER post launch
 ENVIRONMENT = "dev"
 CLOUDFLARE_ACCOUNT_ID = "kp1197"
 TELEGRAM_BOT_INSTANCE_DISPLAY_NAME = "DEV"
@@ -31,7 +30,6 @@ DOWN_FOR_MAINTENANCE = "false"
 QUESTION_TIMEOUT_MS = "30000"
 
 [env.prod.vars]
-# do not change this string EVER post launch
 ENVIRONMENT = "prod"
 CLOUDFLARE_ACCOUNT_ID = "kp1197"
 TELEGRAM_BOT_INSTANCE_DISPLAY_NAME = "PROD"

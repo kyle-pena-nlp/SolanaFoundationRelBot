@@ -1,5 +1,5 @@
 import { CallbackButton } from "./callback_button";
-import { asChartEmoji, subInEmojis, subInEmojisOnButtons } from "./emojis";
+import { subInEmojis, subInEmojisOnButtons } from "./emojis";
 import {
     DeleteTGMessageResponse,
     TGTextEntity,
@@ -17,6 +17,6 @@ import { TelegramWebhookInfo } from "./telegram_webhook_info";
 
 export {
     CallbackButton, DeleteTGMessageResponse, TGMessageChannel, TGMessageChannel as TGStatusMessage, TGTextEntity,
-    TGTextEntityType, TelegramWebhookInfo, TgMessageSentInfo, UpdateableMessage as UpdateableNotification, asChartEmoji, deleteTGMessage, escapeTGText, makeTelegramBotUrl, sendMessageToTG, sendRequestToTG, subInEmojis, subInEmojisOnButtons, updateTGMessage
+    TGTextEntityType, TelegramWebhookInfo, TgMessageSentInfo, UpdateableMessage as UpdateableNotification, deleteTGMessage, escapeTGText, makeTelegramBotUrl, sendMessageToTG, sendRequestToTG, subInEmojis, subInEmojisOnButtons, updateTGMessage
 };
 

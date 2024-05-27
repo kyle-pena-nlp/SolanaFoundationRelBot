@@ -3,16 +3,13 @@ import { Env } from "../../env";
 import { makeFailureResponse, makeJSONResponse, makeSuccessResponse, maybeGetJson } from "../../http";
 import { logDebug, logError, logInfo } from "../../logging";
 import { sendMessageToTG } from "../../telegram";
-import { ChangeTrackedValue, Structural, assertNever, sleep, strictParseBoolean } from "../../util";
+import { ChangeTrackedValue, Structural, assertNever, sleep } from "../../util";
 import { BaseUserDORequest, isBaseUserDORequest } from "./actions/base_user_do_request";
 import { DeleteSessionRequest, DeleteSessionResponse } from "./actions/delete_session";
-import { GetImpersonatedUserIDRequest, GetImpersonatedUserIDResponse } from "./actions/get_impersonated_user_id";
 import { GetSessionValuesRequest, GetSessionValuesWithPrefixRequest, GetSessionValuesWithPrefixResponse } from "./actions/get_session_values";
 import { GetUserDataRequest } from "./actions/get_user_data";
-import { ImpersonateUserRequest, ImpersonateUserResponse } from "./actions/impersonate_user";
 import { SendMessageToUserRequest, SendMessageToUserResponse, isSendMessageToUserRequest } from "./actions/send_message_to_user";
 import { StoreSessionValuesRequest, StoreSessionValuesResponse } from "./actions/store_session_values";
-import { UnimpersonateUserRequest, UnimpersonateUserResponse } from "./actions/unimpersonate_user";
 import { UserData } from "./model/user_data";
 import { SessionTracker } from "./trackers/session_tracker";
 import { UserDOFetchMethod, parseUserDOFetchMethod } from "./userDO_interop";
@@ -31,22 +28,10 @@ export class UserDO {
     // most recent chatID with telegram
     chatID : ChangeTrackedValue<number|null> = new ChangeTrackedValue<number|null>("chatID", null);
 
-    // if the user is impersonating someone, this is populated.
-    // all other properties pertain to the 'real user' per telegramUserID, not the impersonated user
-    impersonatedUserID : ChangeTrackedValue<number|null> = new ChangeTrackedValue<number|null>("impersonatedUserID", null);
-
-
     // tracks variable values associated with the current messageID
     sessionTracker : SessionTracker = new SessionTracker();
 
     inbox: { from : string, message : string }[] = [];
-    // TODO: way to make arrays compatible with ChangeTrackedValue?
-    //inbox : ChangeTrackedValue<string[]> = new ChangeTrackedValue<string[]>("inbox", []);
-
-    // I'm using this to have UserDOs self-schedule alarms as long as they have any positions
-    // That way, an 'incoming request' happens every 10s, allowing the CPU limit to reset to 30s
-    // This allows for longer-running processes.
-    isAlarming : boolean = false;
 
     constructor(state : DurableObjectState, env : any) {
         this.env                = env;
@@ -60,7 +45,6 @@ export class UserDO {
         logDebug("Loading userDO from storage");
         const storage = await this.state.storage.list();
         this.telegramUserID.initialize(storage);
-        this.impersonatedUserID.initialize(storage);
         this.sessionTracker.initialize(storage);
         this.chatID.initialize(storage);
         //logInfo("Loaded userDO from storage: ", this.telegramUserID.value);
@@ -69,46 +53,11 @@ export class UserDO {
     async flushToStorage() {
         await Promise.allSettled([
             this.telegramUserID.flushToStorage(this.state.storage),
-            this.impersonatedUserID.flushToStorage(this.state.storage),
             this.sessionTracker.flushToStorage(this.state.storage),
             this.chatID.flushToStorage(this.state.storage)
         ]);
     }
-
-    async alarm() {
-        //logDebug(`Invoking alarm for ${this.telegramUserID.value}`);
-        try {
-            await this.state.storage.deleteAlarm();
-            await this.maybeScheduleAlarm();
-        }
-        catch {
-            logError(`Problem rescheduling alarm for ${this.telegramUserID.value}`);
-        }
-    }
-
-    async maybeStartAlarming() {
-        if (!this.isAlarming) {
-            await this.maybeScheduleAlarm();
-        }
-    }
-
-    async maybeScheduleAlarm() {
-        if (this.shouldScheduleNextAlarm()) {
-            this.isAlarming = true;
-            await this.state.storage.setAlarm(Date.now() + 10000);
-        }
-        else {
-            this.isAlarming = false;
-        }
-    }
-
-    shouldScheduleNextAlarm() {
-        if (strictParseBoolean(this.env.DOWN_FOR_MAINTENANCE)) {
-            return false;
-        }
-        return false; 
-    }
-
+    
     initialized() : boolean {
         return (this.telegramUserID.value != null);
     }
@@ -116,10 +65,6 @@ export class UserDO {
     async fetch(request : Request) : Promise<Response> {
         try {
             const [method,jsonRequestBody,response] = await this._fetch(request);
-            await this.maybeStartAlarming().catch(r => {
-                logError(`Problem scheduling alarm for UserDO ${this.telegramUserID.value}`)
-                return null;
-            });
             return response;
         }
         catch(e) {
@@ -173,15 +118,6 @@ export class UserDO {
                 response = await this.handleDeleteSession(userAction);
                 break;
             
-            case UserDOFetchMethod.getImpersonatedUserID:
-                response = await this.handleGetImpersonatedUserID(userAction);
-                break;
-            case UserDOFetchMethod.impersonateUser:
-                response = await this.handleImpersonateUser(userAction);
-                break;
-            case UserDOFetchMethod.unimpersonateUser:
-                response = await this.handleUnimpersonateUser(userAction);
-                break;
             case UserDOFetchMethod.sendMessageToUser:
                 response = await this.handleSendMessageToUser(userAction);
                 break;
@@ -225,26 +161,6 @@ export class UserDO {
             }
         })
         this.inbox = inboxMinusSentMessages;
-    }
-
-
-
-
-    async handleImpersonateUser(request : ImpersonateUserRequest) : Promise<Response> {
-        this.impersonatedUserID.value = request.userIDToImpersonate;
-        const responseBody : ImpersonateUserResponse = { };
-        return makeJSONResponse(responseBody);
-    }
-
-    async handleUnimpersonateUser(request : UnimpersonateUserRequest) : Promise<Response> {
-        this.impersonatedUserID.value = null;
-        const responseBody : UnimpersonateUserResponse = { };
-        return makeJSONResponse(responseBody);
-    }
-
-    async handleGetImpersonatedUserID(request : GetImpersonatedUserIDRequest) : Promise<Response> {
-        const responseBody : GetImpersonatedUserIDResponse = { impersonatedUserID : this.impersonatedUserID.value };
-        return makeJSONResponse(responseBody);
     }
 
     handleGetSessionValuesWithPrefix(request : GetSessionValuesWithPrefixRequest) : Response {
@@ -334,10 +250,9 @@ export class UserDO {
     }
 
     async makeUserData(telegramUserID : number) : Promise<UserData> {
-        const isImpersonatingUser = this.impersonatedUserID.value !== null && telegramUserID !== this.impersonatedUserID.value;
         return {
             initialized: this.initialized(),
-            isImpersonatingUser: isImpersonatingUser,
+            isImpersonatingUser: false,
             isAdminOrSuperAdmin: isAdminOrSuperAdmin(telegramUserID, this.env)
         };
     }

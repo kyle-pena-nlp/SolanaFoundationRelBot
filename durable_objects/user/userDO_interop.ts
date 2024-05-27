@@ -2,13 +2,10 @@ import { Env } from "../../env";
 import { makeJSONRequest, makeRequest } from "../../http";
 import { Structural } from "../../util";
 import { DeleteSessionRequest } from "./actions/delete_session";
-import { GetImpersonatedUserIDRequest, GetImpersonatedUserIDResponse } from "./actions/get_impersonated_user_id";
 import { GetSessionValuesRequest, GetSessionValuesWithPrefixRequest, GetSessionValuesWithPrefixResponse, SessionValuesResponse } from "./actions/get_session_values";
 import { GetUserDataRequest } from "./actions/get_user_data";
-import { ImpersonateUserRequest, ImpersonateUserResponse } from "./actions/impersonate_user";
 import { SendMessageToUserRequest, SendMessageToUserResponse } from "./actions/send_message_to_user";
 import { StoreSessionValuesRequest, StoreSessionValuesResponse } from "./actions/store_session_values";
-import { UnimpersonateUserRequest, UnimpersonateUserResponse } from "./actions/unimpersonate_user";
 import { SessionKey } from "./model/session";
 import { UserData } from "./model/user_data";
 
@@ -18,9 +15,6 @@ export enum UserDOFetchMethod {
 	getSessionValues = "getSessionValues",
 	getSessionValuesWithPrefix = "getSessionValuesWithPrefix",
 	deleteSession = "deleteSession",
-	getImpersonatedUserID = "getImpersonatedUserID",
-	impersonateUser = "impersonateUser",
-	unimpersonateUser = "unimpersonateUser",
 	sendMessageToUser = "sendMessageToUser",
 }
 
@@ -28,12 +22,6 @@ export async function sendMessageToUser(toTelegramUserID : number, fromTelegramU
 	const request : SendMessageToUserRequest = { toTelegramUserID, fromTelegramUserName, fromTelegramUserID, message };
 	const method = UserDOFetchMethod.sendMessageToUser;
 	const response = await sendJSONRequestToUserDO<SendMessageToUserRequest,SendMessageToUserResponse>(toTelegramUserID, method, request, env);
-	return response;
-}
-
-export async function getImpersonatedUserID(telegramUserID : number, chatID : number, env : Env) : Promise<GetImpersonatedUserIDResponse> {
-	const request : GetImpersonatedUserIDRequest = { telegramUserID, chatID };
-	const response = await sendJSONRequestToUserDO<GetImpersonatedUserIDRequest,GetImpersonatedUserIDResponse>(telegramUserID, UserDOFetchMethod.getImpersonatedUserID, request, env);
 	return response;
 }
 
@@ -156,17 +144,4 @@ export async function getUserData(telegramUserID : number, chatID : number, mess
 	const body : GetUserDataRequest = { telegramUserID, chatID, messageID, forceRefreshBalance };
 	const response = await sendJSONRequestToUserDO<GetUserDataRequest,UserData>(telegramUserID, UserDOFetchMethod.get, body, env);
 	return response;
-}
-
-
-export async function impersonateUser(telegramUserID : number, chatID : number, userIDToImpersonate : number, env : Env) : Promise<void> {
-	const request : ImpersonateUserRequest = { telegramUserID, chatID, userIDToImpersonate };
-	await sendJSONRequestToUserDO<ImpersonateUserRequest,ImpersonateUserResponse>(telegramUserID, UserDOFetchMethod.impersonateUser, request, env);
-	return;
-}
-
-export async function unimpersonateUser(telegramUserID : number, chatID : number, env : Env) : Promise<void> {
-	const request : UnimpersonateUserRequest = { telegramUserID, chatID };
-	await sendJSONRequestToUserDO<UnimpersonateUserRequest,UnimpersonateUserResponse>(telegramUserID, UserDOFetchMethod.unimpersonateUser, request, env);
-	return;
 }
